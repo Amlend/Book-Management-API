@@ -17,14 +17,14 @@
       <div class="card shadow-sm">
         <div class="card-body">
           <h5 class="card-title text-center mb-4">Login</h5>
-          <form action="#">
+          <form id="loginForm" action="/login/validiation" method="POST">
             <div class="mb-3">
-              <label for="username" class="form-label">Username</label>
+              <label for="email" class="form-label">Email</label>
               <input
                 type="text"
                 class="form-control"
-                id="username"
-                name="username"
+                id="email"
+                name="email"
                 required
               />
             </div>
@@ -41,7 +41,7 @@
             <button type="submit" class="btn btn-primary w-100">Login</button>
           </form>
           <div class="mt-4 text-center">
-            Don't have an account? <a href="#">Sign Up</a>
+            Don't have an account? <a href="/sign-up">Sign Up</a>
           </div>
         </div>
       </div>
