@@ -32,7 +32,7 @@ exports.postValidiateLogin = async (req, res, next) => {
           if (result === true) {
             res.status(200).json({
               success: true,
-              massage: "User loged successfully",
+              message: "User logged successfully",
               token: generateWebToken(user.id),
             });
           } else {

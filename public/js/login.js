@@ -11,10 +11,11 @@ loginForm.addEventListener("submit", async (event) => {
       email,
       password,
     });
+    console.log(response.data);
 
     if (response.data.success) {
       localStorage.setItem("token", response.data.token);
-      window.location.href = "";
+      window.location.href = "/books";
     } else {
       alert("Invalid login credentials.");
     }
