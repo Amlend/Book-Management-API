@@ -8,12 +8,17 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
     />
-    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   </head>
   <body>
     <div class="container mt-3">
       <h1 style="text-align: center">Book Managment App</h1>
-      <form id="bookForm">
+      <form
+        id="bookForm"
+        action="/register-book"
+        method="POST"
+        onsubmit="addnewbook(),freeHolds()"
+      >
         <div class="mb-3">
           <label for="title" class="form-label">Title</label>
           <input
@@ -50,6 +55,24 @@
         </div>
         <button type="submit" class="btn btn-primary">Add Book</button>
       </form>
+      <br />
+      <div class="d-flex mb-3 justify-content-between">
+        <div class="custom-select">
+          <label for="books-per-page"> Books per page:</label>
+          <select id="books-per-page" class="form-select">
+            <option value="2">2 per page</option>
+            <option value="4">4 per page</option>
+            <option value="6">6 per page</option>
+          </select>
+        </div>
+        <div class="custom-select">
+          <label for="books-filter">Filter By:</label>
+          <select id="books-filter" class="form-select">
+            <option value="author">Author</option>
+            <option value="year">Publication year</option>
+          </select>
+        </div>
+      </div>
       <table class="table table-striped mt-4">
         <thead>
           <tr>
@@ -61,7 +84,11 @@
         <tbody id="bookTable"></tbody>
       </table>
     </div>
+    <div
+      class="pagination-container d-flex justify-content-center"
+      id="pagination"
+    ></div>
 
-    <script src="script.js"></script>
+    <script src="books.js"></script>
   </body>
 </html>

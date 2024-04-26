@@ -7,6 +7,8 @@ const sequelize = require("./util/database");
 const loginRoutes = require("./routes/login");
 const signUpRoutes = require("./routes/signup");
 const booksRoutes = require("./routes/books");
+const books = require("./models/books");
+const User = require("./models/user");
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -21,6 +23,10 @@ app.use(express.static(path.join(__dirname, "public", "js")));
 app.use(loginRoutes);
 app.use(signUpRoutes);
 app.use(booksRoutes);
+
+// Associations
+User.hasMany(books);
+books.belongsTo(User);
 
 sequelize
   .sync()

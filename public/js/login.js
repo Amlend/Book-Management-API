@@ -15,7 +15,7 @@ loginForm.addEventListener("submit", async (event) => {
 
     if (response.data.success) {
       localStorage.setItem("token", response.data.token);
-      window.location.href = "/books";
+      window.location.href = "/books-page";
     } else {
       alert("Invalid login credentials.");
     }

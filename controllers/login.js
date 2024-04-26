@@ -16,7 +16,7 @@ exports.postValidiateLogin = async (req, res, next) => {
   };
 
   function generateWebToken(id) {
-    return jwt.sign({ userId: id }, process.env.TOKEN_SECRET);
+    return jwt.sign({ userId: id }, "123456abcdef");
   }
 
   try {
