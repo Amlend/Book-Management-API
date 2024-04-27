@@ -45,6 +45,8 @@ exports.getBooks = async (req, res, next) => {
   const t = await sequelize.transaction();
   const page = parseInt(req.query.page) || 1; // Default to page 1
   const limit = parseInt(req.query.limit) || 2; // Default items per page
+  const sortBy = req.query.sortBy || "id"; // Default sort by ID
+  const sortOrder = req.query.sortOrder || "ASC"; // Default ascending order
 
   try {
     const offset = (page - 1) * limit; // Calculate offset for pagination
@@ -54,6 +56,7 @@ exports.getBooks = async (req, res, next) => {
       transaction: t,
       offset,
       limit,
+      order: [[sortBy, sortOrder]],
     });
 
     const totalBooksCount = await Books.count({

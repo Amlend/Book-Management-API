@@ -37,20 +37,36 @@ async function fetchData() {
 
   try {
     // Initial fetch
-    fetchBooksAndPopulate(1, localStorage.getItem("itemPerPage") || 2); // Default items per page
+    fetchBooksAndPopulate(
+      1,
+      localStorage.getItem("itemPerPage") || 2,
+      localStorage.getItem("booksFilter") || "id"
+    ); // Default items per page
 
     bookDropdown.addEventListener("change", () => {
       const newItemsPerPage = parseInt(bookDropdown.value);
       localStorage.setItem("itemPerPage", bookDropdown.value);
-      fetchBooksAndPopulate(1, newItemsPerPage); // Start from page 1
+      fetchBooksAndPopulate(
+        1,
+        newItemsPerPage,
+        localStorage.getItem("booksFilter")
+      ); // Start from page 1
+    });
+    filterDropdown.addEventListener("change", () => {
+      localStorage.setItem("booksFilter", filterDropdown.value);
+      fetchBooksAndPopulate(
+        1,
+        localStorage.getItem("itemPerPage"),
+        filterDropdown.value
+      );
     });
   } catch (error) {
     console.error("Error fetching books:", error);
   }
 }
 
-async function fetchBooks(page, itemsPerPage, token) {
-  const url = `http://localhost:3000/books?page=${page}&limit=${itemsPerPage}`;
+async function fetchBooks(page, itemsPerPage, filterValue, token) {
+  const url = `http://localhost:3000/books?page=${page}&limit=${itemsPerPage}&sortBy=${filterValue}`;
   const results = await axios.get(url, {
     headers: { Authorization: token },
   });
@@ -89,9 +105,9 @@ function generatePagination(
   }
 }
 
-async function fetchBooksAndPopulate(page, itemsPerPage) {
+async function fetchBooksAndPopulate(page, itemsPerPage, filterValue) {
   const token = localStorage.getItem("token");
-  const results = await fetchBooks(page, itemsPerPage, token);
+  const results = await fetchBooks(page, itemsPerPage, filterValue, token);
   console.log(itemsPerPage);
 
   // scenario where there are less items than requested
