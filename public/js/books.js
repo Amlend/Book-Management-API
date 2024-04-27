@@ -65,6 +65,7 @@ async function fetchData() {
   }
 }
 
+// Fetch limited books at a time using pagination
 async function fetchBooks(page, itemsPerPage, filterValue, token) {
   const url = `http://localhost:3000/books?page=${page}&limit=${itemsPerPage}&sortBy=${filterValue}`;
   const results = await axios.get(url, {
@@ -81,7 +82,7 @@ function updateTable(data) {
   const exp = 0;
   for (let i = 0; i < data.length; i++) {
     console.log(data[i]);
-    AddBook(data[i]);
+    addBookToTable(data[i]);
   }
 }
 
@@ -100,7 +101,9 @@ function generatePagination(
   for (let i = 1; i <= totalPages; i++) {
     const button = document.createElement("button");
     button.innerText = i;
-    button.addEventListener("click", () => onPageChange(i, itemsPerPage));
+    button.addEventListener("click", () =>
+      onPageChange(i, itemsPerPage, localStorage.getItem("booksFilter") || "id")
+    );
     container.appendChild(button);
   }
 }
@@ -125,84 +128,77 @@ async function fetchBooksAndPopulate(page, itemsPerPage, filterValue) {
   );
 }
 
-function handleBooksPageChange(pageNumber, itemsPerPage) {
-  fetchBooksAndPopulate(pageNumber, itemsPerPage);
+function handleBooksPageChange(pageNumber, itemsPerPage, filterValue) {
+  fetchBooksAndPopulate(pageNumber, itemsPerPage, filterValue);
 }
 
-function AddBook(book) {
-  const { title, author, publicationYear } = book;
-  const token = localStorage.getItem("token");
+function addBookToTable(book) {
+  // Destructure book object properties for readability
+  const { title, author, publicationYear, id } = book;
 
-  //  Creating li element ul ***************
-  var tr = document.getElementById("bookTable");
+  const tableBody = document.getElementById("bookTable");
+  const tableRow = document.createElement("tr");
 
-  var li = document.createElement("tr");
-  li.classList.add("table-row");
-  var td1 = document.createElement("td");
-  td1.classList.add("table-cell");
-  var td2 = document.createElement("td");
-  td2.classList.add("table-cell");
-  var td3 = document.createElement("td");
-  td3.classList.add("table-cell");
+  // Create and populate table cells
+  const titleCell = createTableCell(title);
+  const authorCell = createTableCell(author);
+  const publicationYearCell = createTableCell(publicationYear);
 
-  td1.appendChild(document.createTextNode(title));
-  td2.appendChild(document.createTextNode(author));
-  td3.appendChild(document.createTextNode(publicationYear));
+  tableRow.appendChild(titleCell);
+  tableRow.appendChild(authorCell);
+  tableRow.appendChild(publicationYearCell);
 
-  li.appendChild(td1);
-  li.appendChild(td2);
-  li.appendChild(td3);
+  // Add delete button with event listener
+  const deleteButton = createButton("Delete", "btn btn-outline-danger");
+  deleteButton.addEventListener("click", () => removeBook(id));
+  tableRow.appendChild(deleteButton);
 
-  // Creating delete button ***************************
+  // Add edit button with event listener
+  const editButton = createButton("Edit", "btn btn-outline-primary");
+  editButton.addEventListener("click", () => editBook(id));
+  tableRow.appendChild(editButton);
 
-  var deletebtn = document.createElement("button");
-  deletebtn.className = " btn btn-danger  btn-sm float-right";
-  deletebtn.appendChild(document.createTextNode("Delete"));
-  li.appendChild(deletebtn);
+  // Append the table row
+  tableBody.appendChild(tableRow);
 
-  // creating edit button *********************
-
-  var edit = document.createElement("button");
-  edit.className = "btn btn-primary";
-  edit.appendChild(document.createTextNode("Edit"));
-  li.appendChild(edit);
-
-  // appending li element to ul *********************
-
-  tr.appendChild(li);
-
-  deletebtn.addEventListener("click", removeLi);
-
-  async function removeLi() {
-    let id = book.id;
+  async function removeBook(id) {
     await axios
       .delete(`http://localhost:3000/books/${id}`)
       .then((result) => {
         console.log("deleted..");
-        tr.removeChild(li);
+        tableBody.removeChild(tableRow);
       })
       .catch((err) => {
         console.log(err);
       });
   }
 
-  edit.addEventListener("click", editLi);
-  async function editLi() {
-    let id = book.id;
-
+  async function editBook(id) {
     document.getElementById("title").value = title;
     document.getElementById("author").value = author;
     document.getElementById("publicationYear").value = publicationYear;
 
     try {
       await axios.delete(`http://localhost:3000/books/${id}`);
-      tr.removeChild(li);
-      console.log("editing data..");
+      tableBody.removeChild(tableRow);
     } catch (error) {
       console.log(error);
-      console.log("Error in editing fun.");
     }
   }
+}
+
+// Helper functions for creating table cells and buttons
+function createTableCell(text) {
+  const cell = document.createElement("td");
+  cell.textContent = text;
+  return cell;
+}
+
+function createButton(text, buttonClasses) {
+  const button = document.createElement("button");
+  button.classList.add(...buttonClasses.split(" ")); // Spread syntax for class names
+  button.textContent = text;
+  return button;
 }
 
 function freeHolds() {
